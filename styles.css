@@ -288,16 +288,27 @@ select option {
   flex-wrap: wrap;
 }
 
+.offline-status-bar {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 6px 12px;
+  background: #0D121B;
+  border-top: 1px solid var(--border-subtle);
+}
+
 .offline-chip {
-  margin-inline-start: auto;
   font-size: 0.68rem;
   font-weight: 700;
   color: var(--success);
   background: rgba(16, 185, 129, 0.12);
   border: 1px solid rgba(16, 185, 129, 0.35);
   border-radius: 999px;
-  padding: 2px 8px;
-  white-space: nowrap;
+  padding: 3px 10px;
+  text-align: center;
+  line-height: 1.35;
+  max-width: 100%;
 }
 
 .offline-chip.is-offline {

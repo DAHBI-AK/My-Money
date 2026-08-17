@@ -1,7 +1,7 @@
 {
-  "name": "My Money | أموالي",
-  "short_name": "My Money",
-  "description": "Offline-first personal finance PWA for budgets, expenses, and purchase reminders",
+  "name": "أموالي | Amwali",
+  "short_name": "أموالي",
+  "description": "تطبيق مالي شخصي يعمل بدون إنترنت لتتبع الميزانية والمصاريف ومواعيد المشتريات",
   "start_url": "./index.html",
   "scope": "./",
   "id": "./",
@@ -9,8 +9,8 @@
   "background_color": "#080B10",
   "theme_color": "#080B10",
   "orientation": "portrait-primary",
-  "lang": "en",
-  "dir": "ltr",
+  "lang": "ar",
+  "dir": "rtl",
   "icons": [
     {
       "src": "assets/icon-192.png",

@@ -172,17 +172,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return DEFAULT_CURRENCY;
   }
 
-  function persistUiPrefsIfChosen() {
-    try {
-      if (localStorage.getItem('masroofi_ui_lang')) {
-        localStorage.setItem('masroofi_lang', state.lang);
-      }
-      if (localStorage.getItem('masroofi_ui_currency')) {
-        localStorage.setItem('masroofi_currency', state.currency);
-      }
-    } catch (_) {}
-  }
-
   function dictFor(lang) {
     const base = translations.en || translations.ar || {};
     const over = translations[lang] || {};
@@ -513,6 +502,12 @@ document.addEventListener('DOMContentLoaded', () => {
     return id === 'rec_demo_wifi' || id === 'rec_demo_mobile';
   }
 
+  function demoRecurringSeedKey(id) {
+    if (isOldDemoRecurringId(id)) return 'masroofi_demo_recurring';
+    if (id === 'rec_demo_rent') return 'masroofi_demo_rent_bill';
+    return 'masroofi_demo_home_bills';
+  }
+
   function personalDemoRecurring(dict) {
     const month = monthKey();
     const rec = (id, description, amount, category, day) => ({
@@ -534,7 +529,8 @@ document.addEventListener('DOMContentLoaded', () => {
       rec('rec_demo_water', dict.demoRecWater, 180, 'bills', 8),
       rec('rec_demo_electric', dict.demoRecElectric, 320, 'bills', 10),
       rec('rec_demo_gas', dict.demoRecGas, 150, 'bills', 12),
-      rec('rec_demo_maintain', dict.demoRecMaintain, 200, 'bills', 15)
+      rec('rec_demo_maintain', dict.demoRecMaintain, 200, 'bills', 15),
+      rec('rec_demo_rent', dict.demoRecRent, 2500, 'bills', 1)
     ];
   }
 
@@ -558,39 +554,34 @@ document.addEventListener('DOMContentLoaded', () => {
       tx('rec_demo_water', dict.demoRecWater, 180, 'bills', 8),
       tx('rec_demo_electric', dict.demoRecElectric, 320, 'bills', 10),
       tx('rec_demo_gas', dict.demoRecGas, 150, 'bills', 12),
-      tx('rec_demo_maintain', dict.demoRecMaintain, 200, 'bills', 15)
+      tx('rec_demo_maintain', dict.demoRecMaintain, 200, 'bills', 15),
+      tx('rec_demo_rent', dict.demoRecRent, 2500, 'bills', 1)
     ];
   }
 
   function applyDemoRecurringExamples() {
-    let seededOld = false;
-    let seededNew = false;
+    const seedKeys = ['masroofi_demo_recurring', 'masroofi_demo_home_bills', 'masroofi_demo_rent_bill'];
+    const flags = {};
     try {
-      seededOld = localStorage.getItem('masroofi_demo_recurring') === '1';
-      seededNew = localStorage.getItem('masroofi_demo_home_bills') === '1';
+      seedKeys.forEach((key) => { flags[key] = localStorage.getItem(key) === '1'; });
     } catch (_) {}
-    if (seededOld && seededNew) return;
+    if (seedKeys.every((key) => flags[key])) return;
     const dict = t();
     let changed = false;
     personalDemoRecurring(dict).forEach((demo) => {
       if (state.recurring.some((item) => item.id === demo.id)) return;
-      const isOld = isOldDemoRecurringId(demo.id);
-      if (isOld && seededOld) return;
-      if (!isOld && seededNew) return;
+      if (flags[demoRecurringSeedKey(demo.id)]) return;
       state.recurring.push(demo);
       changed = true;
     });
     personalDemoRecurringTxs(dict).forEach((demo) => {
       if (state.transactions.some((tx) => tx.id === demo.id)) return;
-      const isOld = isOldDemoRecurringId(demo.recurringId);
-      if (isOld && seededOld) return;
-      if (!isOld && seededNew) return;
+      if (flags[demoRecurringSeedKey(demo.recurringId)]) return;
       state.transactions.push(demo);
       changed = true;
     });
     try {
-      localStorage.setItem('masroofi_demo_recurring', '1');
-      localStorage.setItem('masroofi_demo_home_bills', '1');
+      seedKeys.forEach((key) => localStorage.setItem(key, '1'));
     } catch (_) {}
     if (changed) saveData({ skipCloud: true });
   }
@@ -1227,12 +1218,14 @@ document.addEventListener('DOMContentLoaded', () => {
     applyAccentTheme(loadAccentTheme());
     state.lang = resolveStartLang();
     state.currency = resolveStartCurrency();
+    try {
+      localStorage.setItem('masroofi_lang', state.lang);
+      localStorage.setItem('masroofi_currency', state.currency);
+    } catch (_) {}
     fillLangSelect();
     fillCurrencySelect();
     langSelector.value = state.lang;
     currencySelector.value = state.currency;
-    applyLanguage(state.lang);
-    persistUiPrefsIfChosen();
 
     if (state.transactions.length === 0 && state.timers.length === 0 && !localStorage.getItem('masroofi_has_run')) {
       loadDemoData(false);
@@ -1244,6 +1237,7 @@ document.addEventListener('DOMContentLoaded', () => {
     applyDemoRecurringExamples();
     ensureCompaniesMigrated();
 
+    applyLanguage(state.lang);
     bindEvents();
     updateSpaceToggle();
     showScreen('home');
@@ -2008,7 +2002,8 @@ document.addEventListener('DOMContentLoaded', () => {
       rec_demo_water: 'demoRecWater',
       rec_demo_electric: 'demoRecElectric',
       rec_demo_gas: 'demoRecGas',
-      rec_demo_maintain: 'demoRecMaintain'
+      rec_demo_maintain: 'demoRecMaintain',
+      rec_demo_rent: 'demoRecRent'
     };
     const timerMap = { timer_demo_1: 'demoTimerHouse', timer_demo_2: 'demoTimerLaptop' };
     const descKeys = [
@@ -2017,7 +2012,7 @@ document.addEventListener('DOMContentLoaded', () => {
       'demoBizIncome', 'demoBizExpense',
       'demoCoPay', 'demoCoMaterials', 'demoCoLabor', 'demoCoEquipment',
       'demoRecWifi', 'demoRecMobile', 'demoRecHealth', 'demoRecWater',
-      'demoRecElectric', 'demoRecGas', 'demoRecMaintain'
+      'demoRecElectric', 'demoRecGas', 'demoRecMaintain', 'demoRecRent'
     ];
     const descToKey = new Map();
     descKeys.forEach((key) => valuesOf(key).forEach((v) => descToKey.set(v, key)));
@@ -4229,6 +4224,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       localStorage.setItem('masroofi_demo_recurring', '1');
       localStorage.setItem('masroofi_demo_home_bills', '1');
+      localStorage.setItem('masroofi_demo_rent_bill', '1');
     } catch (_) {}
 
     state.budgets = { personal: {}, [demoCoId]: {} };
@@ -4425,20 +4421,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return false;
     }
     const data = payload.data;
-    if (data.lang && translations[data.lang]) {
-      state.lang = data.lang;
-      try {
-        localStorage.setItem('masroofi_ui_lang', data.lang);
-        localStorage.setItem('masroofi_lang', data.lang);
-      } catch (_) {}
-    }
-    if (data.currency) {
-      state.currency = data.currency;
-      try {
-        localStorage.setItem('masroofi_ui_currency', data.currency);
-        localStorage.setItem('masroofi_currency', data.currency);
-      } catch (_) {}
-    }
+    state.currency = data.currency || state.currency;
     state.activeSpace = normalizeSpace(data.activeSpace || 'personal');
     if (data.initialBalances && typeof data.initialBalances === 'object') {
       const out = {};
@@ -4471,6 +4454,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       localStorage.setItem('masroofi_custom_tips', JSON.stringify(state.customTips));
       if (data.pinHash && payload.kind !== 'plan') localStorage.setItem('masroofi_pin_hash', data.pinHash);
+      localStorage.setItem('masroofi_lang', state.lang);
+      localStorage.setItem('masroofi_currency', state.currency);
       localStorage.setItem('masroofi_space', state.activeSpace);
       persistCompanies();
       persistInitialBalances();
@@ -4960,6 +4945,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function updateOnlineStatus() {
     const chip = document.getElementById('offlineChip');
+    if (!chip) return;
     const offline = !navigator.onLine;
     chip.textContent = offline ? t().offlineMode : t().onlineMode;
     chip.classList.toggle('is-offline', offline);
