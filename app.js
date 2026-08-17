@@ -172,6 +172,17 @@ document.addEventListener('DOMContentLoaded', () => {
     return DEFAULT_CURRENCY;
   }
 
+  function persistUiPrefsIfChosen() {
+    try {
+      if (localStorage.getItem('masroofi_ui_lang')) {
+        localStorage.setItem('masroofi_lang', state.lang);
+      }
+      if (localStorage.getItem('masroofi_ui_currency')) {
+        localStorage.setItem('masroofi_currency', state.currency);
+      }
+    } catch (_) {}
+  }
+
   function dictFor(lang) {
     const base = translations.en || translations.ar || {};
     const over = translations[lang] || {};
@@ -1216,14 +1227,12 @@ document.addEventListener('DOMContentLoaded', () => {
     applyAccentTheme(loadAccentTheme());
     state.lang = resolveStartLang();
     state.currency = resolveStartCurrency();
-    try {
-      localStorage.setItem('masroofi_lang', state.lang);
-      localStorage.setItem('masroofi_currency', state.currency);
-    } catch (_) {}
     fillLangSelect();
     fillCurrencySelect();
     langSelector.value = state.lang;
     currencySelector.value = state.currency;
+    applyLanguage(state.lang);
+    persistUiPrefsIfChosen();
 
     if (state.transactions.length === 0 && state.timers.length === 0 && !localStorage.getItem('masroofi_has_run')) {
       loadDemoData(false);
@@ -1235,7 +1244,6 @@ document.addEventListener('DOMContentLoaded', () => {
     applyDemoRecurringExamples();
     ensureCompaniesMigrated();
 
-    applyLanguage(state.lang);
     bindEvents();
     updateSpaceToggle();
     showScreen('home');
@@ -4417,7 +4425,20 @@ document.addEventListener('DOMContentLoaded', () => {
       return false;
     }
     const data = payload.data;
-    state.currency = data.currency || state.currency;
+    if (data.lang && translations[data.lang]) {
+      state.lang = data.lang;
+      try {
+        localStorage.setItem('masroofi_ui_lang', data.lang);
+        localStorage.setItem('masroofi_lang', data.lang);
+      } catch (_) {}
+    }
+    if (data.currency) {
+      state.currency = data.currency;
+      try {
+        localStorage.setItem('masroofi_ui_currency', data.currency);
+        localStorage.setItem('masroofi_currency', data.currency);
+      } catch (_) {}
+    }
     state.activeSpace = normalizeSpace(data.activeSpace || 'personal');
     if (data.initialBalances && typeof data.initialBalances === 'object') {
       const out = {};
@@ -4450,8 +4471,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       localStorage.setItem('masroofi_custom_tips', JSON.stringify(state.customTips));
       if (data.pinHash && payload.kind !== 'plan') localStorage.setItem('masroofi_pin_hash', data.pinHash);
-      localStorage.setItem('masroofi_lang', state.lang);
-      localStorage.setItem('masroofi_currency', state.currency);
       localStorage.setItem('masroofi_space', state.activeSpace);
       persistCompanies();
       persistInitialBalances();

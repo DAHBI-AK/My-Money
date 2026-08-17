@@ -10,11 +10,20 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="أموالي">
+  <meta name="apple-mobile-web-app-title" content="My Money">
+  <script>
+    (function () {
+      var langs = { en: 1, ar: 1, zh: 1, es: 1, hi: 1, fr: 1, pt: 1, ru: 1, ja: 1, de: 1 };
+      var lang = localStorage.getItem('masroofi_ui_lang');
+      if (!lang || !langs[lang]) lang = 'en';
+      document.documentElement.lang = lang;
+      document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
+    })();
+  </script>
   <link rel="apple-touch-icon" href="assets/icon-192.png">
   <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
   <link rel="icon" type="image/png" href="assets/logo.png">
-  <link rel="stylesheet" href="styles.css?v=52">
+  <link rel="stylesheet" href="styles.css?v=53">
 </head>
 <body>
 
@@ -25,7 +34,7 @@
         <div class="brand-wrapper" id="btnBrandHome" role="button" tabindex="0">
           <img src="assets/logo.png" alt="" class="brand-logo" width="48" height="48">
           <div class="brand-text">
-            <h1 id="txtAppName">أموالي</h1>
+            <h1 id="txtAppName">My Money</h1>
           </div>
         </div>
 
@@ -35,21 +44,25 @@
             <span class="bell-badge" id="bellBadge" hidden>0</span>
           </button>
           <div class="currency-wrap">
-            <select id="currencySelector" class="currency-select" aria-label="Currency"></select>
-            <button type="button" class="btn-add-curr" id="btnAddCurrency" title="إضافة عملة">+</button>
-            <button type="button" class="btn-add-curr btn-del-curr" id="btnDeleteCurrency" hidden title="حذف">✕</button>
+            <select id="currencySelector" class="currency-select" aria-label="Currency">
+              <option value="USD" selected>$ USD</option>
+            </select>
+            <button type="button" class="btn-add-curr" id="btnAddCurrency" title="Add currency">+</button>
+            <button type="button" class="btn-add-curr btn-del-curr" id="btnDeleteCurrency" hidden title="Delete">✕</button>
           </div>
           <div class="lang-wrap" title="Language">
             <span class="lang-icon" aria-hidden="true">🌐</span>
-            <select id="langSelector" class="lang-select" aria-label="Language"></select>
+            <select id="langSelector" class="lang-select" aria-label="Language">
+              <option value="en" selected>EN</option>
+            </select>
           </div>
         </div>
       </div>
 
       <div class="slogan-banner">
         <span class="icon" aria-hidden="true">✨</span>
-        <p id="txtSlogan">استثمر رصيدك الأبيض ليومك الأسود</p>
-        <span class="offline-chip" id="offlineChip">يعمل بدون إنترنت</span>
+        <p id="txtSlogan">Invest your white savings for your black day</p>
+        <span class="offline-chip" id="offlineChip">Works offline</span>
       </div>
     </header>
 
@@ -58,10 +71,10 @@
       <section class="app-screen is-active" id="screenHome" data-screen="home">
         <div class="space-toggle" id="spaceToggle" role="group" aria-label="Space">
           <button type="button" class="space-btn active" data-space="personal" aria-pressed="true">
-            <span id="lblSpacePersonal">شخصي</span>
+            <span id="lblSpacePersonal">Personal</span>
           </button>
           <button type="button" class="space-btn" data-space="business" aria-pressed="false">
-            <span id="lblSpaceBusiness">شركة</span>
+            <span id="lblSpaceBusiness">Business</span>
           </button>
         </div>
         <p class="space-hint" id="lblSpaceHint" hidden>سمّ شركتك وأضف أكثر من شركة. كل شركة لها دخلها ومصاريفها ورصيدها، مع قوالب حسب نوع النشاط.</p>
@@ -85,32 +98,32 @@
 
         <article class="balance-card">
           <div class="balance-header">
-            <span class="balance-label" id="lblTotalBalance">الرصيد الإجمالي</span>
+            <span class="balance-label" id="lblTotalBalance">Total Balance</span>
             <div class="balance-header-actions">
-              <button type="button" id="btnEditBalance" class="btn-text-gold" title="تعديل الرصيد الأولي">✏️ <span id="txtEditBalance">تعديل الرصيد</span></button>
+              <button type="button" id="btnEditBalance" class="btn-text-gold" title="Edit balances">✏️ <span id="txtEditBalance">Edit balances</span></button>
               <span class="icon" aria-hidden="true">👑</span>
             </div>
           </div>
           <div class="balance-amount">
             <span id="valTotalBalance">0</span>
-            <span class="curr" id="currSymbol">MAD</span>
+            <span class="curr" id="currSymbol">$</span>
           </div>
 
           <div class="balance-stats">
             <div class="stat-item">
-              <span class="stat-title"><span class="icon" aria-hidden="true">⬇️</span> <span id="lblIncome">الدخل</span></span>
+              <span class="stat-title"><span class="icon" aria-hidden="true">⬇️</span> <span id="lblIncome">Total Income</span></span>
               <span class="stat-value inc" id="valTotalIncome">+0</span>
             </div>
             <div class="stat-item">
-              <span class="stat-title"><span class="icon" aria-hidden="true">⬆️</span> <span id="lblExpenses">المصروفات</span></span>
+              <span class="stat-title"><span class="icon" aria-hidden="true">⬆️</span> <span id="lblExpenses">Total Expenses</span></span>
               <span class="stat-value exp" id="valTotalExpenses">-0</span>
             </div>
           </div>
 
           <div class="health-meter">
             <div class="health-info">
-              <span id="lblFinancialHealth">مؤشر الصحة المالية</span>
-              <span class="health-status" id="txtHealthStatus">ممتاز</span>
+              <span id="lblFinancialHealth">Financial Health Index</span>
+              <span class="health-status" id="txtHealthStatus">Excellent</span>
             </div>
             <div class="health-bar-track">
               <div class="health-bar-fill" id="healthBarFill"></div>
@@ -411,7 +424,7 @@
     <nav class="bottom-nav" aria-label="Main">
       <button type="button" class="nav-item active" id="navHome" data-screen="home" aria-current="page">
         <span class="icon" aria-hidden="true">🏠</span>
-        <span id="lblNavHome">الرئيسية</span>
+        <span id="lblNavHome">Home</span>
       </button>
       <button type="button" class="nav-item" id="navTimers" data-screen="timers">
         <span class="icon" aria-hidden="true">⏳</span>
@@ -858,8 +871,8 @@
 
   <div class="lock-screen" id="lockScreen" hidden>
     <img src="assets/logo.png" alt="" class="lock-logo" width="72" height="72">
-    <h2 id="txtLockAppName">أموالي</h2>
-    <p id="txtUnlockHint">أدخل الرمز السري (6 أرقام)</p>
+    <h2 id="txtLockAppName">My Money</h2>
+    <p id="txtUnlockHint">Enter your 6-digit PIN</p>
     <form id="unlockForm">
       <input type="password" id="unlockPin" class="form-control" inputmode="numeric" autocomplete="off" pattern="[0-9]{4,8}" minlength="4" maxlength="8" required>
       <button type="submit" class="btn-gold-sm btn-modal-submit" id="btnUnlock">فتح</button>
@@ -867,11 +880,11 @@
     <button type="button" class="btn-text-gold" id="btnForgotPin"><span id="txtForgotPin">نسيت الرمز؟ استعادة عبر Gmail</span></button>
   </div>
 
-  <script src="translations.js?v=52"></script>
-  <script src="app.js?v=52"></script>
+  <script src="translations.js?v=53"></script>
+  <script src="app.js?v=53"></script>
   <script>
     if ('serviceWorker' in navigator && location.protocol !== 'file:') {
-      navigator.serviceWorker.register('./sw.js?v=52').then((reg) => {
+      navigator.serviceWorker.register('./sw.js?v=53').then((reg) => {
         reg.update().catch(() => {});
       }).catch(() => {});
     }
