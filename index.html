@@ -14,7 +14,7 @@
   <link rel="apple-touch-icon" href="assets/icon-192.png">
   <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
   <link rel="icon" type="image/png" href="assets/logo.png">
-  <link rel="stylesheet" href="styles.css?v=54">
+  <link rel="stylesheet" href="styles.css?v=55">
 </head>
 <body>
 
@@ -35,7 +35,10 @@
             <span class="bell-badge" id="bellBadge" hidden>0</span>
           </button>
           <div class="currency-wrap">
-            <select id="currencySelector" class="currency-select" aria-label="Currency"></select>
+            <div class="header-icon-select">
+              <span class="currency-symbol" id="currencySymbolDisplay" aria-hidden="true">$</span>
+              <select id="currencySelector" class="currency-select" aria-label="Currency"></select>
+            </div>
             <button type="button" class="btn-add-curr" id="btnAddCurrency" title="إضافة عملة">+</button>
             <button type="button" class="btn-add-curr btn-del-curr" id="btnDeleteCurrency" hidden title="حذف">✕</button>
           </div>
@@ -870,11 +873,11 @@
     <button type="button" class="btn-text-gold" id="btnForgotPin"><span id="txtForgotPin">نسيت الرمز؟ استعادة عبر Gmail</span></button>
   </div>
 
-  <script src="translations.js?v=54"></script>
-  <script src="app.js?v=54"></script>
+  <script src="translations.js?v=55"></script>
+  <script src="app.js?v=55"></script>
   <script>
     if ('serviceWorker' in navigator && location.protocol !== 'file:') {
-      navigator.serviceWorker.register('./sw.js?v=54').then((reg) => {
+      navigator.serviceWorker.register('./sw.js?v=55').then((reg) => {
         reg.update().catch(() => {});
       }).catch(() => {});
     }

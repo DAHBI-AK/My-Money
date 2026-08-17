@@ -1285,6 +1285,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('masroofi_ui_currency', state.currency);
       } catch (_) {}
       document.getElementById('btnDeleteCurrency').hidden = !customCurrencies().some((c) => c.code === state.currency);
+      syncCurrencySymbol();
       renderAll();
     });
 
@@ -2119,6 +2120,8 @@ document.addEventListener('DOMContentLoaded', () => {
     else langSelector.value = DEFAULT_LANG;
     const selected = LANG_OPTIONS.find((l) => l.code === langSelector.value);
     if (selected) langSelector.title = selected.native;
+    const langWrap = document.querySelector('.lang-wrap');
+    if (langWrap) langWrap.title = selected ? selected.native : (t().language || 'Language');
     setTimeout(() => { fillingLangSelect = false; }, 0);
   }
 
@@ -2150,6 +2153,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const isCustom = customCurrencies().some((c) => c.code === currencySelector.value);
     document.getElementById('btnDeleteCurrency').hidden = !isCustom;
+    syncCurrencySymbol();
+  }
+
+  function syncCurrencySymbol() {
+    const el = document.getElementById('currencySymbolDisplay');
+    const code = currencySelector.value || state.currency || DEFAULT_CURRENCY;
+    const symbol = currencySymbolOf(code);
+    if (el) el.textContent = symbol;
+    currencySelector.title = symbol === code ? code : `${symbol} ${code}`;
   }
 
   function openCurrencyModal() {

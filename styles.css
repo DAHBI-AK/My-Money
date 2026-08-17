@@ -183,53 +183,77 @@ button, select, input {
   gap: 4px;
 }
 
-.lang-wrap {
+.lang-wrap,
+.header-icon-select {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 0;
+  justify-content: center;
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
   background: var(--bg-card);
   border: 1px solid var(--border-gold);
   border-radius: 10px;
-  min-height: 40px;
   overflow: visible;
   flex-shrink: 0;
 }
 
-.lang-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  color: var(--gold-light);
-  font-size: 0.95rem;
-  line-height: 1;
-  flex-shrink: 0;
-  user-select: none;
-  pointer-events: none;
-}
-
-.lang-wrap:focus-within {
+.lang-wrap:focus-within,
+.header-icon-select:focus-within {
   border-color: var(--gold-primary);
   box-shadow: 0 0 10px var(--gold-glow);
 }
 
-.lang-wrap .lang-select {
-  border: 0;
-  border-radius: 0;
-  background: var(--bg-card);
+.lang-icon,
+.currency-symbol {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
   color: var(--gold-light);
-  box-shadow: none;
-  max-width: 58px;
-  min-width: 52px;
-  min-height: 38px;
-  padding: 8px 4px 8px 2px;
+  font-size: 1.05rem;
+  line-height: 1;
   font-weight: 800;
-  letter-spacing: 0.04em;
+  user-select: none;
+  pointer-events: none;
+  padding: 0 3px;
+}
+
+.currency-symbol {
+  font-size: 0.92rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lang-wrap .lang-select,
+.header-icon-select .currency-select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  box-shadow: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  font-size: 16px;
+  min-height: 0;
+  max-width: none;
   color-scheme: dark;
 }
 
 .lang-wrap .lang-select:hover,
-.lang-wrap .lang-select:focus {
+.lang-wrap .lang-select:focus,
+.header-icon-select .currency-select:hover,
+.header-icon-select .currency-select:focus {
   border: 0;
   box-shadow: none;
 }
