@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>My Money</title>
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#080B10">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="أموالي">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <link rel="stylesheet" href="styles.css?v=52">
+</head>
+<body>
+
+  <div class="app-viewport" id="appViewport">
+
+    <header class="app-header">
+      <div class="header-top">
+        <div class="brand-wrapper" id="btnBrandHome" role="button" tabindex="0">
+          <img src="assets/logo.png" alt="" class="brand-logo" width="48" height="48">
+          <div class="brand-text">
+            <h1 id="txtAppName">أموالي</h1>
+          </div>
+        </div>
+
+        <div class="header-controls">
+          <button type="button" class="bell-btn" id="btnBell" aria-label="Notifications">
+            <span aria-hidden="true">🔔</span>
+            <span class="bell-badge" id="bellBadge" hidden>0</span>
+          </button>
+          <div class="currency-wrap">
+            <select id="currencySelector" class="currency-select" aria-label="Currency"></select>
+            <button type="button" class="btn-add-curr" id="btnAddCurrency" title="إضافة عملة">+</button>
+            <button type="button" class="btn-add-curr btn-del-curr" id="btnDeleteCurrency" hidden title="حذف">✕</button>
+          </div>
+          <div class="lang-wrap" title="Language">
+            <span class="lang-icon" aria-hidden="true">🌐</span>
+            <select id="langSelector" class="lang-select" aria-label="Language"></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="slogan-banner">
+        <span class="icon" aria-hidden="true">✨</span>
+        <p id="txtSlogan">استثمر رصيدك الأبيض ليومك الأسود</p>
+        <span class="offline-chip" id="offlineChip">يعمل بدون إنترنت</span>
+      </div>
+    </header>
+
+    <main class="app-body" id="appBody">
+
+      <section class="app-screen is-active" id="screenHome" data-screen="home">
+        <div class="space-toggle" id="spaceToggle" role="group" aria-label="Space">
+          <button type="button" class="space-btn active" data-space="personal" aria-pressed="true">
+            <span id="lblSpacePersonal">شخصي</span>
+          </button>
+          <button type="button" class="space-btn" data-space="business" aria-pressed="false">
+            <span id="lblSpaceBusiness">شركة</span>
+          </button>
+        </div>
+        <p class="space-hint" id="lblSpaceHint" hidden>سمّ شركتك وأضف أكثر من شركة. كل شركة لها دخلها ومصاريفها ورصيدها، مع قوالب حسب نوع النشاط.</p>
+        <div class="company-bar" id="companyBar" hidden>
+          <label class="company-bar-label" id="lblCompanySelect" for="companySelect">الشركة النشطة</label>
+          <div class="company-bar-row" id="companyBarRow">
+            <select id="companySelect" class="form-control" aria-labelledby="lblCompanySelect"></select>
+            <button type="button" class="btn-secondary" id="btnEditCompany"><span id="txtEditCompany">تعديل</span></button>
+            <button type="button" class="btn-gold-sm" id="btnAddCompany"><span id="txtAddCompany">إضافة شركة</span></button>
+          </div>
+          <p class="field-hint" id="txtCompanyTypeHint"></p>
+        </div>
+
+        <article class="home-tip-card" id="homeTipCard" role="button" tabindex="0">
+          <div class="home-tip-head">
+            <span class="tip-kind-badge" id="homeTipKind">تحفيز</span>
+            <button type="button" class="btn-text-gold" id="btnOpenTipsFromHome" data-screen="tips"><span id="txtSeeAllTips">كل النصائح</span></button>
+          </div>
+          <p class="home-tip-text" id="txtHomeTip"></p>
+        </article>
+
+        <article class="balance-card">
+          <div class="balance-header">
+            <span class="balance-label" id="lblTotalBalance">الرصيد الإجمالي</span>
+            <div class="balance-header-actions">
+              <button type="button" id="btnEditBalance" class="btn-text-gold" title="تعديل الرصيد الأولي">✏️ <span id="txtEditBalance">تعديل الرصيد</span></button>
+              <span class="icon" aria-hidden="true">👑</span>
+            </div>
+          </div>
+          <div class="balance-amount">
+            <span id="valTotalBalance">0</span>
+            <span class="curr" id="currSymbol">MAD</span>
+          </div>
+
+          <div class="balance-stats">
+            <div class="stat-item">
+              <span class="stat-title"><span class="icon" aria-hidden="true">⬇️</span> <span id="lblIncome">الدخل</span></span>
+              <span class="stat-value inc" id="valTotalIncome">+0</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-title"><span class="icon" aria-hidden="true">⬆️</span> <span id="lblExpenses">المصروفات</span></span>
+              <span class="stat-value exp" id="valTotalExpenses">-0</span>
+            </div>
+          </div>
+
+          <div class="health-meter">
+            <div class="health-info">
+              <span id="lblFinancialHealth">مؤشر الصحة المالية</span>
+              <span class="health-status" id="txtHealthStatus">ممتاز</span>
+            </div>
+            <div class="health-bar-track">
+              <div class="health-bar-fill" id="healthBarFill"></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="wallets-card" id="walletsCard">
+          <div class="section-title">
+            <h2><span class="icon" aria-hidden="true">👛</span> <span id="lblWallets">أرصدتك</span></h2>
+            <button type="button" class="btn-gold-sm" id="btnOpenTransfer">↕ <span id="txtTransfer">تحويل</span></button>
+          </div>
+          <p class="field-hint" id="txtWalletsHint">وزّع ما تملك: نقد، كروت بنكية، عملات رقمية، وغيرها. لكل رصيد خطة استخدام واضحة.</p>
+          <div class="wallet-grid" id="walletGrid"></div>
+        </article>
+
+        <article class="blackday-card" id="blackDayCard">
+          <div class="section-title">
+            <h2><span class="icon" aria-hidden="true">🛡️</span> <span id="lblBlackDay">صندوق اليوم الأسود</span></h2>
+            <select id="blackDayMonths" class="mini-select" aria-label="Months">
+              <option value="1">1</option>
+              <option value="3">3</option>
+              <option value="6">6</option>
+              <option value="9">9</option>
+              <option value="12">12</option>
+              <option value="24">24</option>
+              <option value="36">36</option>
+              <option value="60">60</option>
+            </select>
+          </div>
+          <p class="field-hint" id="txtBlackDayHint"></p>
+          <div class="health-meter">
+            <div class="health-info">
+              <span id="txtBlackDayProgress">0</span>
+              <span id="txtImpulseSaved">0</span>
+            </div>
+            <div class="health-bar-track">
+              <div class="health-bar-fill" id="blackDayFill"></div>
+            </div>
+          </div>
+        </article>
+
+        <div class="action-grid">
+          <button type="button" class="btn-action inc" id="btnOpenIncomeModal">
+            <span aria-hidden="true">➕</span> <span id="btnAddIncome">إضافة دخل</span>
+          </button>
+          <button type="button" class="btn-action exp" id="btnOpenExpenseModal">
+            <span aria-hidden="true">➖</span> <span id="btnAddExpense">إضافة مصروف</span>
+          </button>
+        </div>
+        <div class="quick-add" id="quickAddRow"></div>
+
+        <article class="transactions-card">
+          <div class="section-title">
+            <h2><span class="icon" aria-hidden="true">📜</span> <span id="lblTxHistory" data-i18n="transactionsHistory">سجل المعاملات المالية</span></h2>
+          </div>
+          <div class="search-filter-bar">
+            <input type="search" id="txSearchInput" class="search-input" placeholder="بحث..." autocomplete="off">
+            <select id="txCategoryFilter" class="category-filter">
+              <option value="all" id="optAllCategories">جميع الفئات</option>
+            </select>
+          </div>
+          <div class="transaction-list" id="transactionList"></div>
+        </article>
+
+        <article class="recurring-card" id="recurringCard">
+          <div class="section-title">
+            <h2><span class="icon" aria-hidden="true">🔁</span> <span id="lblRecurring">فواتير واشتراكات</span></h2>
+            <button type="button" class="btn-gold-sm" id="btnOpenRecurring">+ <span id="txtAddRecurring">إضافة</span></button>
+          </div>
+          <div id="recurringList"></div>
+        </article>
+
+        <article class="theme-card" id="themeCard">
+          <div class="section-title">
+            <h2><span class="icon" aria-hidden="true">🎨</span> <span id="lblTheme">لون التطبيق</span></h2>
+          </div>
+          <p class="field-hint" id="txtThemeHint">كل لون له اسم ونمط مختلف لتمييزه حتى مع عمى الألوان. يمكنك أيضاً مزج ثلاثة ألوان.</p>
+          <div class="theme-swatches" id="themeSwatches" role="group" aria-labelledby="lblTheme"></div>
+          <div class="theme-mix">
+            <span class="theme-mix-label" id="lblThemeMix">مزيج من 3 ألوان</span>
+            <input type="hidden" id="themeMix1" value="#A855F7">
+            <input type="hidden" id="themeMix2" value="#22C55E">
+            <input type="hidden" id="themeMix3" value="#3B82F6">
+            <div class="theme-mix-row">
+              <button type="button" class="theme-mix-chip" data-mix-slot="1" id="btnThemeMix1">
+                <span id="lblThemeMix1">لون 1</span>
+                <span class="theme-mix-swatch" id="themeMixSwatch1"></span>
+              </button>
+              <button type="button" class="theme-mix-chip" data-mix-slot="2" id="btnThemeMix2">
+                <span id="lblThemeMix2">لون 2</span>
+                <span class="theme-mix-swatch" id="themeMixSwatch2"></span>
+              </button>
+              <button type="button" class="theme-mix-chip" data-mix-slot="3" id="btnThemeMix3">
+                <span id="lblThemeMix3">لون 3</span>
+                <span class="theme-mix-swatch" id="themeMixSwatch3"></span>
+              </button>
+              <button type="button" class="theme-mix-chip theme-mix-result" id="btnThemeMixResult" aria-pressed="false">
+                <span id="lblThemeMixResult">المزيج</span>
+                <span class="theme-mix-preview" id="themeMixPreview" aria-hidden="true"></span>
+              </button>
+            </div>
+            <div class="theme-picker" id="themePicker" hidden>
+              <p class="theme-picker-title" id="txtThemePicker">اختر لوناً داخل الإطار</p>
+              <div class="theme-palette" id="themePalette"></div>
+              <div class="theme-rgb">
+                <label class="theme-rgb-row"><span>R</span><input type="range" id="themeRgbR" min="0" max="255" value="168"><span id="themeRgbRVal">168</span></label>
+                <label class="theme-rgb-row"><span>G</span><input type="range" id="themeRgbG" min="0" max="255" value="85"><span id="themeRgbGVal">85</span></label>
+                <label class="theme-rgb-row"><span>B</span><input type="range" id="themeRgbB" min="0" max="255" value="247"><span id="themeRgbBVal">247</span></label>
+              </div>
+              <button type="button" class="btn-secondary" id="btnCloseThemePicker"><span id="txtCloseThemePicker">تم</span></button>
+            </div>
+            <button type="button" class="btn-gold-sm" id="btnApplyThemeMix"><span id="txtApplyThemeMix">تطبيق المزيج</span></button>
+          </div>
+        </article>
+
+        <article class="lock-card" id="lockCard">
+          <div class="section-title">
+            <h2><span class="icon" aria-hidden="true">🔒</span> <span id="lblLockTitle">قفل PIN</span></h2>
+          </div>
+          <p class="field-hint" id="txtLockHint">يمكنك قفل التطبيق برمز سري من 6 أرقام لمنع المتطفلين. عند نسيان الرمز يمكن استعادته عبر حساب Gmail المرتبط.</p>
+          <div class="pwa-actions">
+            <button type="button" class="btn-gold-sm" id="btnSetPin"><span id="txtSetPin">تعيين PIN</span></button>
+            <button type="button" class="btn-secondary" id="btnRemovePin" hidden><span id="txtRemovePin">إزالة القفل</span></button>
+          </div>
+        </article>
+
+        <article class="sync-card" id="syncCard">
+          <div class="section-title">
+            <h2><span class="icon" aria-hidden="true">☁️</span> <span id="lblSyncTitle">المزامنة بين الأجهزة عبر Gmail</span></h2>
+          </div>
+        <p class="pwa-instruction-text" id="txtSyncHint">للمزامنة أدخل بريد Gmail. ستصلك رسالة برمز عشوائي على الحساب لتأكيد الربط بين الأجهزة.</p>
+          <p class="sync-status" id="txtSyncStatus"></p>
+          <div class="pwa-actions">
+            <button type="button" class="btn-gold-sm" id="btnConnectGmail">ربط حساب Gmail</button>
+            <button type="button" class="btn-gold-sm btn-export" id="btnSyncNow" hidden>مزامنة الآن</button>
+            <button type="button" class="btn-gold-sm btn-demo" id="btnRestoreCloud" hidden>استعادة من Google</button>
+            <button type="button" class="btn-secondary" id="btnDisconnectGmail" hidden>فصل الحساب</button>
+            <button type="button" class="btn-gold-sm btn-export" id="btnSendGmail">إرسال عبر Gmail</button>
+            <button type="button" class="btn-gold-sm btn-demo" id="btnSaveBackup">نسخ الخطة إلى ملف</button>
+            <button type="button" class="btn-gold-sm" id="btnCopyPlan">نسخ الخطة</button>
+            <button type="button" class="btn-gold-sm" id="btnRestoreFile">تحميل خطة من ملف</button>
+            <input type="file" id="backupFileInput" accept="application/json,.json" hidden>
+          </div>
+          <p class="field-hint" id="txtPlanFileHint">احفظ خطتك في ملف لإعادة تحميلها لاحقاً، أو أرسل الملف لشخص آخر ليحمّله في تطبيقه.</p>
+          <details class="sync-advanced">
+            <summary id="lblGoogleClient">معرّف عميل Google</summary>
+            <p class="field-hint" id="txtGoogleClientHint"></p>
+            <input type="text" id="googleClientIdInput" class="form-control" autocomplete="off" spellcheck="false">
+          </details>
+        </article>
+
+        <article class="pwa-banner">
+          <div class="pwa-header">
+            <span aria-hidden="true">📱</span>
+            <span id="lblInstallApp">ثبّت التطبيق على الهاتف</span>
+          </div>
+          <p class="pwa-instruction-text" id="txtPwaHint">يُفضَّل الاتصال بالإنترنت لتحديث التطبيق ومزامنة بياناتك. يمكنك إضافة أي معلومات دون إنترنت؛ عند العودة للاتصال تُحدَّث تلقائياً. الأهم: التنبيهات تعمل محلياً حتى بدون إنترنت بعد التثبيت والسماح بالإشعارات.</p>
+          <p class="pwa-instruction-text" id="txtPwaInstructions"></p>
+          <div class="pwa-actions">
+            <button type="button" class="btn-gold-sm btn-install" id="btnInstallPwa" hidden>
+              <span id="btnTxtInstall">تثبيت التطبيق</span>
+            </button>
+            <button type="button" class="btn-gold-sm btn-demo" id="btnLoadDemo">
+              ⚡ <span id="btnTxtDemo">تحميل بيانات تجريبية</span>
+            </button>
+            <button type="button" class="btn-gold-sm btn-export" id="btnExportCSV">
+              📥 <span id="btnTxtExport">تصدير CSV</span>
+            </button>
+            <button type="button" class="btn-gold-sm btn-reset" id="btnResetData">
+              🗑️ <span id="btnTxtReset">مسح البيانات</span>
+            </button>
+          </div>
+        </article>
+      </section>
+
+      <section class="app-screen" id="screenTimers" data-screen="timers" hidden>
+        <article class="section-container">
+          <div class="section-title">
+            <h2><span class="icon" aria-hidden="true">⏳</span> <span id="lblPurchaseTimers" data-i18n="purchaseTimers">مواعيد ومؤقت المشتريات</span></h2>
+            <button type="button" class="btn-gold-sm" id="btnOpenTimerModal">+ <span id="btnAddTimer">إضافة مؤقت</span></button>
+          </div>
+          <div class="timer-cards-list" id="timerCardsList"></div>
+        </article>
+      </section>
+
+      <section class="app-screen" id="screenAnalytics" data-screen="analytics" hidden>
+        <aside class="disclaimer-card" id="disclaimerCard" role="note">
+          <div class="disclaimer-head">
+            <span class="disclaimer-icon" aria-hidden="true">⚠️</span>
+            <strong id="lblDisclaimerTitle">إخلاء مسؤولية</strong>
+          </div>
+          <p id="txtDisclaimer">⚠️ تنبيه: هذا التطبيق في طور تجريبي وقد تحدث فيه أخطاء برمجية. لا يُنصح باتخاذه مرجعاً موثوقاً بنسبة 100٪. التطبيق مصمَّم بمساعدة الذكاء الاصطناعي؛ يُفترض أن يكون آمناً وموثوقاً قدر الإمكان، لكن الذكاء الاصطناعي ليس موضع ثقة مطلقة. يُفضَّل الاحتفاظ دائماً بنسخة احتياطية من بياناتك.</p>
+        </aside>
+
+        <article class="recap-card" id="recapCard">
+          <div class="section-title">
+            <h2><span class="icon" aria-hidden="true">📅</span> <span id="lblRecap">ملخص هذا الشهر</span></h2>
+          </div>
+          <p class="recap-sentence" id="txtRecapSentence"></p>
+          <div class="recap-stats" id="recapStats"></div>
+        </article>
+
+        <article class="insight-card" id="moneyGoneCard">
+          <div class="section-title">
+            <h2><span class="icon" aria-hidden="true">🕳️</span> <span id="lblMoneyGone">أين يختفي المال؟</span></h2>
+          </div>
+          <div class="period-toggle" id="spendPeriodToggle" role="group" aria-label="Period">
+            <button type="button" class="period-btn" data-period="week"><span id="lblPeriodWeek">أسبوع</span></button>
+            <button type="button" class="period-btn active" data-period="month"><span id="lblPeriodMonth">شهر</span></button>
+            <button type="button" class="period-btn" data-period="year"><span id="lblPeriodYear">سنة</span></button>
+          </div>
+          <p class="field-hint" id="txtSpendPeriodHint"></p>
+          <div class="spend-summary" id="spendSummary"></div>
+          <div id="moneyGoneList"></div>
+        </article>
+
+        <article class="insight-card" id="trackCard">
+          <div class="section-title">
+            <h2><span class="icon" aria-hidden="true">🧭</span> <span id="lblOnTrack">هل أنا على الطريق الصحيح؟</span></h2>
+          </div>
+          <div class="track-verdict" id="trackVerdict"></div>
+          <div class="insight-stats" id="trackStats"></div>
+        </article>
+
+        <article class="insight-card" id="profitCompareCard">
+          <div class="section-title">
+            <h2><span class="icon" aria-hidden="true">📈</span> <span id="lblProfitCompare">أرباحي مقارنة بالسنوات الماضية</span></h2>
+          </div>
+          <div id="profitCompareList"></div>
+        </article>
+
+        <article class="insight-card" id="journeyCard">
+          <div class="section-title">
+            <h2><span class="icon" aria-hidden="true">🏆</span> <span id="lblJourney">رحلتي منذ تثبيت التطبيق</span></h2>
+          </div>
+          <p class="field-hint" id="txtJourneySince"></p>
+          <div class="insight-stats" id="journeyStats"></div>
+          <div class="achievements-grid" id="achievementsGrid"></div>
+        </article>
+
+        <article class="budgets-card" id="budgetsCard">
+          <div class="section-title">
+            <h2><span class="icon" aria-hidden="true">🎯</span> <span id="lblBudgets">الميزانيات الشهرية</span></h2>
+          </div>
+          <div id="budgetList"></div>
+        </article>
+
+        <article class="analytics-card">
+          <div class="section-title">
+            <h2><span class="icon" aria-hidden="true">📊</span> <span id="lblAnalytics">تحليل المصاريف حسب الفئات</span></h2>
+          </div>
+          <div class="chart-container">
+            <div class="chart-svg-wrapper">
+              <svg viewBox="0 0 36 36" class="donut-chart" id="svgDonutChart" role="img" aria-label="Expense chart">
+                <circle cx="18" cy="18" r="15.915" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="3"></circle>
+              </svg>
+            </div>
+            <div class="chart-legend" id="chartLegend"></div>
+          </div>
+        </article>
+      </section>
+
+      <section class="app-screen" id="screenTips" data-screen="tips" hidden>
+        <article class="tips-hero" id="tipsHeroCard">
+          <div class="section-title">
+            <h2><span class="icon" aria-hidden="true">💡</span> <span id="lblTipsTitle">نصائح مالية</span></h2>
+            <button type="button" class="btn-gold-sm" id="btnOpenTipModal">+ <span id="txtAddTip">أضف نصيحتك</span></button>
+          </div>
+          <p class="field-hint" id="txtTipsHint">نصائح جاهزة بكل اللغات، ونصائحك الخاصة تبقى محفوظة وتظهر كلما فتحت التطبيق.</p>
+        </article>
+
+        <article class="tip-of-day-card" id="tipOfDayCard" role="button" tabindex="0">
+          <div class="tip-kind-row">
+            <span class="tip-kind-badge" id="tipOfDayKind">تحفيز</span>
+            <button type="button" class="btn-text-gold" id="btnShuffleTip"><span id="txtShuffleTip">نصيحة أخرى</span></button>
+          </div>
+          <p class="tip-of-day-text" id="txtTipOfDay"></p>
+        </article>
+
+        <article class="section-container">
+          <div class="section-title">
+            <h2><span class="icon" aria-hidden="true">📌</span> <span id="lblMyTips">نصائحي</span></h2>
+          </div>
+          <div id="customTipsList"></div>
+        </article>
+
+        <article class="section-container">
+          <div class="section-title">
+            <h2><span class="icon" aria-hidden="true">📚</span> <span id="lblBuiltinTips">مكتبة النصائح</span></h2>
+          </div>
+          <div id="builtinTipsList"></div>
+        </article>
+      </section>
+
+    </main>
+
+    <nav class="bottom-nav" aria-label="Main">
+      <button type="button" class="nav-item active" id="navHome" data-screen="home" aria-current="page">
+        <span class="icon" aria-hidden="true">🏠</span>
+        <span id="lblNavHome">الرئيسية</span>
+      </button>
+      <button type="button" class="nav-item" id="navTimers" data-screen="timers">
+        <span class="icon" aria-hidden="true">⏳</span>
+        <span id="lblNavTimers">المؤقتات</span>
+      </button>
+      <div class="nav-tips-wrap">
+        <button type="button" class="nav-item" id="navTips" data-screen="tips">
+          <span class="icon" aria-hidden="true">💡</span>
+          <span id="lblNavTips">نصائح</span>
+        </button>
+        <button type="button" class="nav-eye-toggle" id="btnToggleHomeTip" aria-pressed="true" title="إخفاء النصيحة">
+          <span class="nav-eye-open" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+          </span>
+          <span class="nav-eye-locked" aria-hidden="true" hidden>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.6 10.6a2 2 0 102.8 2.8"/><path d="M9.9 5.2A11 11 0 0121.8 12a11 11 0 01-2.1 3.2"/><path d="M6.6 6.6A11 11 0 002.2 12a11 11 0 0011.3 6.8 10 10 0 002.4-.3"/></svg>
+          </span>
+        </button>
+      </div>
+      <button type="button" class="nav-item" id="navAnalytics" data-screen="analytics">
+        <span class="icon" aria-hidden="true">📊</span>
+        <span id="lblNavAnalytics">التحليلات</span>
+      </button>
+    </nav>
+
+    <div class="notif-panel" id="notifPanel" hidden>
+      <div class="notif-panel-head">
+        <h3 id="lblNotifTitle">الإشعارات</h3>
+        <button type="button" class="btn-icon-del" id="btnCloseNotif" aria-label="Close">✕</button>
+      </div>
+      <div class="notif-panel-actions">
+        <button type="button" class="btn-gold-sm" id="btnEnableNotifs">تفعيل جرس الإشعارات</button>
+        <button type="button" class="btn-gold-sm btn-demo" id="btnAddReminder">+ تذكير جديد</button>
+        <button type="button" class="btn-secondary" id="btnMarkRead">تعليم الكل كمقروء</button>
+      </div>
+      <p class="notif-status" id="txtNotifStatus"></p>
+      <div class="notif-list" id="notifList"></div>
+    </div>
+
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <div class="modal-overlay" id="balanceModal">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalBalanceTitle">
+      <h3 class="modal-title" id="modalBalanceTitle">أرصدة ما تملك</h3>
+      <form id="balanceForm">
+        <p class="field-hint" id="txtBalanceWalletsHint">أدخل المبلغ الحالي في كل نوع. الدخل والمصاريف تُحسب لاحقاً حسب الرصيد الذي تختاره في المعاملة.</p>
+        <div id="walletBalanceFields"></div>
+        <p class="sync-status" id="txtWalletOpeningsTotal"></p>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" id="btnCloseBalanceModal">إلغاء</button>
+          <button type="submit" class="btn-gold-sm btn-modal-submit" id="btnSaveBalance">تحديث الأرصدة</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="txModal">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalTxTitle">
+      <h3 class="modal-title" id="modalTxTitle">إضافة معاملة جديدة</h3>
+      <form id="txForm">
+        <input type="hidden" id="txTypeInput" value="expense">
+        <div class="form-group">
+          <label id="lblFormDesc" for="txDesc">البيان / الوصف</label>
+          <input type="text" id="txDesc" class="form-control" required maxlength="120" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label id="lblFormAmount" for="txAmount">المبلغ</label>
+          <input type="number" step="0.01" min="0" inputmode="decimal" id="txAmount" class="form-control" required placeholder="0.00">
+        </div>
+        <div class="form-group">
+          <label id="lblFormCategory" for="txCategory">الفئة</label>
+          <div class="link-row">
+            <select id="txCategory" class="form-control"></select>
+            <button type="button" class="btn-gold-sm" id="btnAddCategory" title="+">+</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label id="lblFormWallet" for="txWallet">الظرف</label>
+          <select id="txWallet" class="form-control"></select>
+        </div>
+        <div class="form-group">
+          <label id="lblFormDate" for="txDate">التاريخ</label>
+          <input type="date" id="txDate" class="form-control" required>
+        </div>
+        <label class="check-row">
+          <input type="checkbox" id="txRemindCheck">
+          <span id="lblTxRemind">تذكير لهذه المعاملة</span>
+        </label>
+        <div class="form-group" id="txRemindGroup" hidden>
+          <label id="lblTxRepeat" for="txRepeatSelect">تكرار التنبيه</label>
+          <select id="txRepeatSelect" class="form-control">
+            <option value="once">مرة واحدة</option>
+            <option value="daily">يومي</option>
+            <option value="weekly" selected>أسبوعي</option>
+            <option value="monthly">شهري</option>
+            <option value="yearly">سنوي</option>
+          </select>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" id="btnCloseTxModal">إلغاء</button>
+          <button type="submit" class="btn-gold-sm btn-modal-submit" id="btnSaveTx">حفظ المعاملة</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="timerModal">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalTimerTitle">
+      <h3 class="modal-title" id="modalTimerTitle">إضافة مؤقت شراء جديد</h3>
+      <form id="timerForm">
+        <div class="advice-card" id="waitAdviceCard">
+          <strong id="lblWaitAdviceTitle">نصيحة قبل الشراء</strong>
+          <p id="txtWaitAdvice">انتظر أسبوعاً قبل أن تشتري المنتج. قد تكون لا تحتاجه حقاً، وقد يكون مجرد نزوة عابرة.</p>
+        </div>
+        <div class="form-group">
+          <label id="lblTimerName" for="timerItemName">اسم الغرض المراد شراؤه</label>
+          <input type="text" id="timerItemName" class="form-control" maxlength="120" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <span class="field-label" id="lblItemImage">صورة المنتج أو علامة مصغّرة</span>
+          <p class="field-hint" id="txtItemImageHint">إذا لم تعرف اسم المنتج، الصق صورة أو اختر علامة جاهزة.</p>
+          <div class="icon-grid" id="productIconGrid"></div>
+          <div class="image-drop" id="imageDropZone" tabindex="0">
+            <div class="image-preview" id="imagePreview" hidden>
+              <img id="imagePreviewImg" alt="">
+              <button type="button" class="btn-icon-del" id="btnClearImage">✕</button>
+            </div>
+            <div class="image-drop-hint" id="imageDropHint">
+              <span id="txtPasteImage">لصق صورة</span>
+              <label class="btn-gold-sm btn-file">
+                <span id="txtPickImage">رفع صورة</span>
+                <input type="file" id="timerImageInput" accept="image/*" hidden>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label id="lblTimerPrice" for="timerPrice">السعر المحدد</label>
+          <input type="number" step="0.01" min="0" inputmode="decimal" id="timerPrice" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label id="lblTimerCategory" for="timerCategory">الفئة</label>
+          <select id="timerCategory" class="form-control"></select>
+        </div>
+        <div class="form-group">
+          <label id="lblBuyLink" for="timerBuyUrl">رابط الشراء أونلاين</label>
+          <div class="link-row">
+            <input type="text" id="timerBuyUrl" class="form-control" inputmode="url" autocomplete="url" placeholder="https://">
+            <button type="button" class="btn-gold-sm" id="btnPasteBuyUrl">لصق الرابط</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label id="lblTimerDelay" for="timerDelaySelect">موعد التنبيه</label>
+          <select id="timerDelaySelect" class="form-control">
+            <option value="2days" id="opt2Days">بعد يومين (48 ساعة)</option>
+            <option value="1week" id="opt1Week" selected>بعد أسبوع (7 أيام)</option>
+            <option value="1month" id="opt1Month">بعد شهر (30 يوم)</option>
+            <option value="custom" id="optCustom">تاريخ مخصص</option>
+          </select>
+        </div>
+        <div class="form-group" id="customDateGroup" hidden>
+          <label id="lblCustomDate" for="timerCustomDate">التاريخ والوقت المحدد</label>
+          <input type="datetime-local" id="timerCustomDate" class="form-control">
+        </div>
+        <label class="check-row">
+          <input type="checkbox" id="timerBellCheck" checked>
+          <span id="lblTimerBell">تفعيل جرس التذكير</span>
+        </label>
+        <div class="form-group" id="timerRepeatGroup">
+          <label id="lblTimerRepeat" for="timerRepeatSelect">تكرار التنبيه</label>
+          <select id="timerRepeatSelect" class="form-control">
+            <option value="once">مرة واحدة</option>
+            <option value="daily">يومي</option>
+            <option value="weekly" selected>أسبوعي</option>
+            <option value="monthly">شهري</option>
+            <option value="yearly">سنوي</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label id="lblTimerNotes" for="timerNotes">ملاحظات إضافية</label>
+          <input type="text" id="timerNotes" class="form-control" maxlength="160" autocomplete="off">
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" id="btnCloseTimerModal">إلغاء</button>
+          <button type="submit" class="btn-gold-sm btn-modal-submit" id="btnSaveTimer">ضبط التنبيه</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="reminderModal">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalReminderTitle">
+      <h3 class="modal-title" id="modalReminderTitle">تذكير جديد</h3>
+      <form id="reminderForm">
+        <div class="form-group">
+          <label id="lblReminderTitle" for="reminderTitleInput">عنوان التذكير</label>
+          <input type="text" id="reminderTitleInput" class="form-control" required maxlength="120" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label id="lblReminderRepeat" for="reminderRepeatSelect">تكرار التنبيه</label>
+          <select id="reminderRepeatSelect" class="form-control">
+            <option value="once">مرة واحدة</option>
+            <option value="daily">يومي</option>
+            <option value="weekly" selected>أسبوعي</option>
+            <option value="monthly">شهري</option>
+            <option value="yearly">سنوي</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label id="lblReminderWhen" for="reminderWhenInput">التاريخ والوقت المحدد</label>
+          <input type="datetime-local" id="reminderWhenInput" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label id="lblReminderLink" for="reminderBuyUrl">رابط الشراء أونلاين</label>
+          <input type="text" id="reminderBuyUrl" class="form-control" inputmode="url" placeholder="https://">
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" id="btnCloseReminderModal">إلغاء</button>
+          <button type="submit" class="btn-gold-sm btn-modal-submit" id="btnSaveReminder">ضبط التنبيه</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="currencyModal">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalCurrencyTitle">
+      <h3 class="modal-title" id="modalCurrencyTitle">إضافة عملة خاصة</h3>
+      <form id="currencyForm">
+        <div class="form-group">
+          <label id="lblCurrencyCode" for="customCurrencyCode">رمز العملة</label>
+          <input type="text" id="customCurrencyCode" class="form-control" required maxlength="8" placeholder="GBP" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label id="lblCurrencySymbol" for="customCurrencySymbol">الرمز / الاختصار</label>
+          <input type="text" id="customCurrencySymbol" class="form-control" required maxlength="12" placeholder="£" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label id="lblCurrencyName" for="customCurrencyName">اسم العملة</label>
+          <input type="text" id="customCurrencyName" class="form-control" maxlength="40" placeholder="جنيه إسترليني" autocomplete="off">
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" id="btnCloseCurrencyModal">إلغاء</button>
+          <button type="submit" class="btn-gold-sm btn-modal-submit" id="btnSaveCurrency">حفظ</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="affordModal">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalAffordTitle">
+      <h3 class="modal-title" id="modalAffordTitle">هل أتحمل هذا؟</h3>
+      <div id="affordBody" class="afford-body"></div>
+      <div class="form-actions afford-actions">
+        <button type="button" class="btn-gold-sm" id="btnDecideBought">اشتريت</button>
+        <button type="button" class="btn-secondary" id="btnDecideSkip">تنازلت</button>
+        <button type="button" class="btn-secondary" id="btnDecideWait">ما زلت أنتظر</button>
+      </div>
+      <label class="check-row" id="blackDayMoveRow">
+        <input type="checkbox" id="moveToBlackDay" checked>
+        <span id="lblMoveBlackDay">حوّل المبلغ إلى صندوق اليوم الأسود</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="transferModal">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalTransferTitle">
+      <h3 class="modal-title" id="modalTransferTitle">تحويل بين الأظرف</h3>
+      <form id="transferForm">
+        <div class="form-group">
+          <label id="lblTransferFrom" for="transferFrom">من</label>
+          <select id="transferFrom" class="form-control"></select>
+        </div>
+        <div class="form-group">
+          <label id="lblTransferTo" for="transferTo">إلى</label>
+          <select id="transferTo" class="form-control"></select>
+        </div>
+        <div class="form-group">
+          <label id="lblTransferAmount" for="transferAmount">المبلغ</label>
+          <input type="number" step="0.01" min="0" inputmode="decimal" id="transferAmount" class="form-control" required>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" id="btnCloseTransfer">إلغاء</button>
+          <button type="submit" class="btn-gold-sm btn-modal-submit" id="btnSaveTransfer">تحويل</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="recurringModal">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalRecurringTitle">
+      <h3 class="modal-title" id="modalRecurringTitle">فاتورة متكررة</h3>
+      <form id="recurringForm">
+        <div class="form-group">
+          <label id="lblRecurringDesc" for="recurringDesc">الوصف</label>
+          <input type="text" id="recurringDesc" class="form-control" required maxlength="120" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label id="lblRecurringAmount" for="recurringAmount">المبلغ</label>
+          <input type="number" step="0.01" min="0" inputmode="decimal" id="recurringAmount" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label id="lblRecurringType" for="recurringType">النوع</label>
+          <select id="recurringType" class="form-control">
+            <option value="expense">مصروف</option>
+            <option value="income">دخل</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label id="lblRecurringCat" for="recurringCategory">الفئة</label>
+          <select id="recurringCategory" class="form-control"></select>
+        </div>
+        <div class="form-group">
+          <label id="lblRecurringWallet" for="recurringWallet">الظرف</label>
+          <select id="recurringWallet" class="form-control"></select>
+        </div>
+        <div class="form-group">
+          <label id="lblRecurringDay" for="recurringDay">يوم الشهر</label>
+          <input type="number" min="1" max="28" id="recurringDay" class="form-control" required value="1">
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" id="btnCloseRecurring">إلغاء</button>
+          <button type="submit" class="btn-gold-sm btn-modal-submit" id="btnSaveRecurring">حفظ</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="categoryModal">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalCategoryTitle">
+      <h3 class="modal-title" id="modalCategoryTitle">فئة جديدة</h3>
+      <form id="categoryForm">
+        <div class="form-group">
+          <label id="lblCategoryName" for="customCategoryName">اسم الفئة</label>
+          <input type="text" id="customCategoryName" class="form-control" required maxlength="40" autocomplete="off">
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" id="btnCloseCategory">إلغاء</button>
+          <button type="submit" class="btn-gold-sm btn-modal-submit" id="btnSaveCategory">حفظ</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="companyModal">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalCompanyTitle">
+      <h3 class="modal-title" id="modalCompanyTitle">إضافة شركة</h3>
+      <form id="companyForm">
+        <div class="form-group">
+          <label id="lblCompanyName" for="companyNameInput">اسم الشركة</label>
+          <input type="text" id="companyNameInput" class="form-control" required maxlength="60" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label id="lblCompanyType" for="companyTypeSelect">نوع الشركة</label>
+          <select id="companyTypeSelect" class="form-control"></select>
+        </div>
+        <label class="check-row" id="companyTplRow">
+          <input type="checkbox" id="companyApplyTpl" checked>
+          <span id="txtCompanyApplyTpl">تعبئة بمثال القالب (رصيد ومعاملات توضيحية)</span>
+        </label>
+        <p class="field-hint" id="txtCompanyTplHint">إن كنت مقاولاً اختر «بناء ومقاولات» لإدارة دفعات المشروع ومواد البناء والأجور.</p>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" id="btnCloseCompany">إلغاء</button>
+          <button type="button" class="btn-secondary" id="btnDeleteCompany" hidden><span id="txtDeleteCompany">حذف</span></button>
+          <button type="submit" class="btn-gold-sm btn-modal-submit" id="btnSaveCompany">حفظ</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="syncVerifyModal">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalSyncVerifyTitle">
+      <h3 class="modal-title" id="modalSyncVerifyTitle">تأكيد المزامنة عبر Gmail</h3>
+      <form id="syncEmailForm">
+        <div class="form-group">
+          <label id="lblSyncGmail" for="syncGmailInput">بريد Gmail</label>
+          <input type="email" id="syncGmailInput" class="form-control" autocomplete="email" required placeholder="you@gmail.com">
+        </div>
+        <p class="field-hint" id="txtSyncGmailHint">سنرسل رمزاً عشوائياً إلى هذا الحساب.</p>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" id="btnCloseSyncVerify">إلغاء</button>
+          <button type="submit" class="btn-gold-sm btn-modal-submit" id="btnSendSyncCode">إرسال الرمز</button>
+        </div>
+      </form>
+      <form id="syncCodeForm" hidden>
+        <div class="form-group">
+          <label id="lblSyncCode" for="syncCodeInput">الرمز المرسل إلى Gmail</label>
+          <input type="text" id="syncCodeInput" class="form-control" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" minlength="6" maxlength="6" required>
+        </div>
+        <p class="field-hint" id="txtSyncCodeHint">تحقق من الوارد أو الرسائل غير المرغوب فيها.</p>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" id="btnResendSyncCode">إعادة الإرسال</button>
+          <button type="submit" class="btn-gold-sm btn-modal-submit" id="btnConfirmSyncCode">تأكيد</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="pinModal">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalPinTitle">
+      <h3 class="modal-title" id="modalPinTitle">تعيين PIN</h3>
+      <form id="pinForm">
+        <div class="form-group">
+          <label id="lblPinNew" for="pinNew">رمز من 6 أرقام</label>
+          <input type="password" id="pinNew" class="form-control" inputmode="numeric" autocomplete="new-password" pattern="[0-9]{6}" minlength="6" maxlength="6" required>
+        </div>
+        <div class="form-group">
+          <label id="lblPinConfirm" for="pinConfirm">تأكيد الرمز</label>
+          <input type="password" id="pinConfirm" class="form-control" inputmode="numeric" autocomplete="new-password" pattern="[0-9]{6}" minlength="6" maxlength="6" required>
+        </div>
+        <p class="field-hint" id="txtPinRecoveryHint"></p>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" id="btnClosePin">إلغاء</button>
+          <button type="submit" class="btn-gold-sm btn-modal-submit" id="btnSavePin">حفظ</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="tipModal">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalTipTitle">
+      <h3 class="modal-title" id="modalTipTitle">أضف نصيحتك</h3>
+      <form id="tipForm">
+        <div class="form-group">
+          <label id="lblTipKind" for="tipKindSelect">نوع الرسالة</label>
+          <select id="tipKindSelect" class="form-control">
+            <option value="motivation" id="optTipMotivation">تحفيز</option>
+            <option value="alert" id="optTipAlert">تنبيه</option>
+            <option value="idea" id="optTipIdea">فكرة مبتكرة</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label id="lblTipText" for="tipTextInput">نص النصيحة</label>
+          <textarea id="tipTextInput" class="form-control tip-textarea" rows="4" maxlength="280" required placeholder="اكتب فكرة أو تذكيراً مالياً..."></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" id="btnCloseTipModal">إلغاء</button>
+          <button type="submit" class="btn-gold-sm btn-modal-submit" id="btnSaveTip">حفظ</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="lock-screen" id="lockScreen" hidden>
+    <img src="assets/logo.png" alt="" class="lock-logo" width="72" height="72">
+    <h2 id="txtLockAppName">أموالي</h2>
+    <p id="txtUnlockHint">أدخل الرمز السري (6 أرقام)</p>
+    <form id="unlockForm">
+      <input type="password" id="unlockPin" class="form-control" inputmode="numeric" autocomplete="off" pattern="[0-9]{4,8}" minlength="4" maxlength="8" required>
+      <button type="submit" class="btn-gold-sm btn-modal-submit" id="btnUnlock">فتح</button>
+    </form>
+    <button type="button" class="btn-text-gold" id="btnForgotPin"><span id="txtForgotPin">نسيت الرمز؟ استعادة عبر Gmail</span></button>
+  </div>
+
+  <script src="translations.js?v=52"></script>
+  <script src="app.js?v=52"></script>
+  <script>
+    if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+      navigator.serviceWorker.register('./sw.js?v=52').then((reg) => {
+        reg.update().catch(() => {});
+      }).catch(() => {});
+    }
+  </script>
+</body>
+</html>
