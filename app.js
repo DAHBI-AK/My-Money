@@ -2533,31 +2533,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const healthFill = document.getElementById('healthBarFill');
     const healthStatus = document.getElementById('txtHealthStatus');
+    const overspending = expenses > income;
+    const savePct = income > 0
+      ? ((income - expenses) / income) * 100
+      : (expenses === 0 ? 100 : 0);
+    const healthPct = Math.max(0, Math.min(100, savePct));
+    healthFill.style.width = `${healthPct}%`;
 
-    if (funds === 0 && expenses === 0) {
+    if (income === 0 && expenses === 0) {
       healthFill.style.width = '100%';
       healthFill.style.backgroundColor = 'var(--gold-primary)';
       healthStatus.textContent = dict.excellent;
       healthStatus.style.color = 'var(--gold-primary)';
-      return;
-    }
-
-    const expRatio = funds > 0 ? (expenses / funds) * 100 : 100;
-    const healthPct = Math.max(0, Math.min(100, 100 - expRatio));
-    healthFill.style.width = `${healthPct}%`;
-
-    if (healthPct >= 50) {
+    } else if (overspending) {
+      healthFill.style.backgroundColor = 'var(--danger)';
+      healthStatus.textContent = dict.deficit || dict.warning;
+      healthStatus.style.color = 'var(--danger)';
+    } else if (healthPct >= 20) {
       healthFill.style.backgroundColor = 'var(--success)';
       healthStatus.textContent = dict.excellent;
       healthStatus.style.color = 'var(--success)';
-    } else if (healthPct >= 20) {
+    } else {
       healthFill.style.backgroundColor = 'var(--warning)';
       healthStatus.textContent = dict.moderate;
       healthStatus.style.color = 'var(--warning)';
-    } else {
-      healthFill.style.backgroundColor = 'var(--danger)';
-      healthStatus.textContent = dict.warning;
-      healthStatus.style.color = 'var(--danger)';
     }
   }
 
