@@ -489,11 +489,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function personalDemoTransactions(dict, today, prevDate) {
     return [
-      { id: 'tx_1', type: 'income', description: dict.demoTx1, amount: 8000, category: 'salary', date: prevDate, walletId: 'bank', spaceId: 'personal' },
-      { id: 'tx_2', type: 'expense', description: dict.demoTx2, amount: 2500, category: 'other', date: today, walletId: 'cash', spaceId: 'personal' },
-      { id: 'tx_3', type: 'expense', description: dict.demoTx3, amount: 450, category: 'food', date: today, walletId: 'cash', spaceId: 'personal' },
-      { id: 'tx_4', type: 'expense', description: dict.demoTx4, amount: 300, category: 'transport', date: prevDate, walletId: 'cash', spaceId: 'personal' },
-      { id: 'tx_5', type: 'expense', description: dict.demoTx5, amount: 800, category: 'bills', date: today, walletId: 'bank', spaceId: 'personal' },
+      { id: 'tx_1', type: 'income', description: dict.demoTx1, amount: 12000, category: 'salary', date: prevDate, walletId: 'bank', spaceId: 'personal' },
+      { id: 'tx_2', type: 'expense', description: dict.demoTx2, amount: 900, category: 'other', date: today, walletId: 'cash', spaceId: 'personal' },
+      { id: 'tx_3', type: 'expense', description: dict.demoTx3, amount: 500, category: 'food', date: today, walletId: 'cash', spaceId: 'personal' },
+      { id: 'tx_4', type: 'expense', description: dict.demoTx4, amount: 350, category: 'transport', date: prevDate, walletId: 'cash', spaceId: 'personal' },
+      { id: 'tx_5', type: 'expense', description: dict.demoTx5, amount: 250, category: 'bills', date: today, walletId: 'bank', spaceId: 'personal' },
       { id: 'tx_6', type: 'expense', description: dict.demoTxChronic, amount: 200, category: 'chronic', date: today, walletId: 'cash', spaceId: 'personal' }
     ];
   }
@@ -524,13 +524,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     return [
       rec('rec_demo_wifi', dict.demoRecWifi, 250, 'bills', 1),
-      rec('rec_demo_mobile', dict.demoRecMobile, 99, 'bills', 5),
-      rec('rec_demo_health', dict.demoRecHealth, 450, 'health', 2),
-      rec('rec_demo_water', dict.demoRecWater, 180, 'bills', 8),
-      rec('rec_demo_electric', dict.demoRecElectric, 320, 'bills', 10),
-      rec('rec_demo_gas', dict.demoRecGas, 150, 'bills', 12),
+      rec('rec_demo_mobile', dict.demoRecMobile, 100, 'bills', 5),
+      rec('rec_demo_health', dict.demoRecHealth, 400, 'health', 2),
+      rec('rec_demo_water', dict.demoRecWater, 150, 'bills', 8),
+      rec('rec_demo_electric', dict.demoRecElectric, 300, 'bills', 10),
+      rec('rec_demo_gas', dict.demoRecGas, 100, 'bills', 12),
       rec('rec_demo_maintain', dict.demoRecMaintain, 200, 'bills', 15),
-      rec('rec_demo_rent', dict.demoRecRent, 2500, 'bills', 1)
+      rec('rec_demo_rent', dict.demoRecRent, 2300, 'bills', 1)
     ];
   }
 
@@ -549,13 +549,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     return [
       tx('rec_demo_wifi', dict.demoRecWifi, 250, 'bills', 1),
-      tx('rec_demo_mobile', dict.demoRecMobile, 99, 'bills', 5),
-      tx('rec_demo_health', dict.demoRecHealth, 450, 'health', 2),
-      tx('rec_demo_water', dict.demoRecWater, 180, 'bills', 8),
-      tx('rec_demo_electric', dict.demoRecElectric, 320, 'bills', 10),
-      tx('rec_demo_gas', dict.demoRecGas, 150, 'bills', 12),
+      tx('rec_demo_mobile', dict.demoRecMobile, 100, 'bills', 5),
+      tx('rec_demo_health', dict.demoRecHealth, 400, 'health', 2),
+      tx('rec_demo_water', dict.demoRecWater, 150, 'bills', 8),
+      tx('rec_demo_electric', dict.demoRecElectric, 300, 'bills', 10),
+      tx('rec_demo_gas', dict.demoRecGas, 100, 'bills', 12),
       tx('rec_demo_maintain', dict.demoRecMaintain, 200, 'bills', 15),
-      tx('rec_demo_rent', dict.demoRecRent, 2500, 'bills', 1)
+      tx('rec_demo_rent', dict.demoRecRent, 2300, 'bills', 1)
     ];
   }
 
@@ -608,6 +608,33 @@ document.addEventListener('DOMContentLoaded', () => {
         const cur = state.transactions[idx];
         if (Number(cur.amount) !== Number(demo.amount) || cur.category !== demo.category || spaceIdOf(cur) !== 'personal') {
           state.transactions[idx] = Object.assign({}, cur, demo);
+          changed = true;
+        }
+      });
+      personalDemoRecurring(dict).forEach((demo) => {
+        const idx = state.recurring.findIndex((item) => item.id === demo.id);
+        if (idx === -1) return;
+        const cur = state.recurring[idx];
+        if (Number(cur.amount) !== Number(demo.amount) || cur.category !== demo.category) {
+          state.recurring[idx] = Object.assign({}, cur, {
+            amount: demo.amount,
+            category: demo.category,
+            description: demo.description,
+            dayOfMonth: demo.dayOfMonth
+          });
+          changed = true;
+        }
+      });
+      personalDemoRecurringTxs(dict).forEach((demo) => {
+        const idx = state.transactions.findIndex((tx) => tx.id === demo.id);
+        if (idx === -1) return;
+        const cur = state.transactions[idx];
+        if (Number(cur.amount) !== Number(demo.amount) || cur.category !== demo.category) {
+          state.transactions[idx] = Object.assign({}, cur, {
+            amount: demo.amount,
+            category: demo.category,
+            description: demo.description
+          });
           changed = true;
         }
       });

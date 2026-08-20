@@ -14,7 +14,7 @@
   <link rel="apple-touch-icon" href="assets/icon-192.png">
   <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
   <link rel="icon" type="image/png" href="assets/logo.png">
-  <link rel="stylesheet" href="styles.css?v=56">
+  <link rel="stylesheet" href="styles.css?v=60">
 </head>
 <body>
 
@@ -23,7 +23,7 @@
     <header class="app-header">
       <div class="header-top">
         <div class="brand-wrapper" id="btnBrandHome" role="button" tabindex="0">
-          <img src="assets/logo.png" alt="" class="brand-logo" width="48" height="48">
+          <img src="assets/logo.png" alt="" class="brand-logo" width="36" height="36">
           <div class="brand-text">
             <h1 id="txtAppName">أموالي</h1>
           </div>
@@ -48,14 +48,13 @@
           </div>
         </div>
       </div>
-
-      <div class="slogan-banner">
-        <span class="icon" aria-hidden="true">✨</span>
-        <p id="txtSlogan">استثمر رصيدك الأبيض ليومك الأسود</p>
-      </div>
     </header>
 
     <main class="app-body" id="appBody">
+      <div class="slogan-banner" id="sloganBanner">
+        <span class="icon" aria-hidden="true">✨</span>
+        <p id="txtSlogan">استثمر رصيدك الأبيض ليومك الأسود</p>
+      </div>
 
       <section class="app-screen is-active" id="screenHome" data-screen="home">
         <div class="space-toggle" id="spaceToggle" role="group" aria-label="Space">
@@ -873,11 +872,11 @@
     <button type="button" class="btn-text-gold" id="btnForgotPin"><span id="txtForgotPin">نسيت الرمز؟ استعادة عبر Gmail</span></button>
   </div>
 
-  <script src="translations.js?v=56"></script>
-  <script src="app.js?v=56"></script>
+  <script src="translations.js?v=60"></script>
+  <script src="app.js?v=60"></script>
   <script>
     if ('serviceWorker' in navigator && location.protocol !== 'file:') {
-      navigator.serviceWorker.register('./sw.js?v=56').then((reg) => {
+      navigator.serviceWorker.register('./sw.js?v=60').then((reg) => {
         reg.update().catch(() => {});
       }).catch(() => {});
     }

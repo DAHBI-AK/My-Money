@@ -1,4 +1,4 @@
-const CACHE_NAME = 'masroofi-gold-v56';
+const CACHE_NAME = 'masroofi-gold-v60';
 const REMINDER_DB = 'masroofi-sw';
 const REMINDER_STORE = 'reminders';
 const I18N_STORE = 'i18n';

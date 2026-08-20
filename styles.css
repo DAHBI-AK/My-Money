@@ -122,26 +122,30 @@ button, select, input {
 
 .app-header {
   flex-shrink: 0;
-  padding: calc(16px + var(--safe-top)) 16px 12px;
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  padding: calc(10px + var(--safe-top)) 12px 8px;
   background: linear-gradient(180deg, #161F2E 0%, var(--bg-surface) 100%);
   border-bottom: 1px solid var(--border-gold);
-  z-index: 50;
 }
 
 .header-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 0;
+  flex-wrap: nowrap;
+  min-width: 0;
 }
 
 .brand-wrapper {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   min-width: 0;
+  flex: 1;
   cursor: pointer;
   border-radius: 10px;
 }
@@ -152,35 +156,43 @@ button, select, input {
 }
 
 .brand-logo {
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
   object-fit: cover;
   border: 2px solid var(--gold-primary);
-  box-shadow: 0 0 15px var(--gold-glow);
+  box-shadow: 0 0 12px var(--gold-glow);
   flex-shrink: 0;
 }
 
+.brand-text {
+  min-width: 0;
+}
+
 .brand-text h1 {
-  font-size: 1.2rem;
+  font-size: 1.05rem;
   font-weight: 800;
   background: var(--gold-gradient);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: -0.3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .header-controls {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
+  flex-shrink: 0;
 }
 
 .currency-wrap {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
 }
 
 .lang-wrap,
@@ -189,12 +201,12 @@ button, select, input {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  min-width: 40px;
-  height: 40px;
+  width: 34px;
+  min-width: 34px;
+  height: 34px;
   background: var(--bg-card);
   border: 1px solid var(--border-gold);
-  border-radius: 10px;
+  border-radius: 9px;
   overflow: visible;
   flex-shrink: 0;
 }
@@ -270,10 +282,10 @@ select option {
   background: var(--bg-card);
   color: var(--gold-light);
   border: 1px solid var(--border-gold);
-  border-radius: 10px;
-  width: 32px;
-  min-height: 40px;
-  font-size: 1.1rem;
+  border-radius: 9px;
+  width: 28px;
+  min-height: 34px;
+  font-size: 1rem;
   font-weight: 800;
   cursor: pointer;
   flex-shrink: 0;
@@ -302,14 +314,20 @@ select option {
 }
 
 .slogan-banner {
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 55;
   background: linear-gradient(90deg, var(--gold-12) 0%, var(--gold-04) 100%);
   border-inline-start: 3px solid var(--gold-primary);
   padding: 8px 12px;
+  margin: 0 12px 8px;
   border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   gap: 10px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
 }
 
 .offline-status-bar {
@@ -351,6 +369,9 @@ select option {
   font-weight: 500;
   flex: 1;
   min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .app-body {
@@ -358,16 +379,19 @@ select option {
   min-height: 0;
   overflow: hidden;
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .app-screen {
   display: none;
   flex-direction: column;
   gap: 20px;
-  height: 100%;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 16px 16px 20px;
+  padding: 8px 16px 20px;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
 }
@@ -1474,11 +1498,11 @@ select option {
   position: relative;
   background: var(--bg-card);
   border: 1px solid var(--border-gold);
-  border-radius: 10px;
-  width: 40px;
-  height: 40px;
+  border-radius: 9px;
+  width: 34px;
+  height: 34px;
   cursor: pointer;
-  font-size: 1.1rem;
+  font-size: 1rem;
   flex-shrink: 0;
 }
 
